@@ -1,4 +1,7 @@
 shell/cl - clear backup files created by text editors (accepts '-r'
 option to do that recurcively)
+
+shell/ping_host - check if the host is pingable (at least one ping passed)
+
 shell/playrnd - search for music files from current directory and play
 in random order using mplayer

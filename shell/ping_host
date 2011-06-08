@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ 2 -ne $# ]; then
+    echo usage: $0 '<host> <tries>'
+    exit
+fi
+
+target=$1
+tries=$2
+failed=0
+
+for ((i=0; $i<$tries; i++)); do
+  if ! ping -c1 $target -W2 > /dev/null 2>&1; then
+      ((failed++))
+  fi
+done
+
+if [ $tries = $failed ]; then
+  echo FAILED
+  exit 1
+fi
+
+echo OK [failed $failed of $tries]
