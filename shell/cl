@@ -1,0 +1,9 @@
+#!/bin/sh
+
+OPTS=
+REGEX='\(.*/#.*#\)\|\(.*~$\)'
+if [ "-r" != "$1" ]; then
+    OPTS="-maxdepth 1"
+fi
+
+find . $OPTS -regex $REGEX -exec rm -vf '{}' \;
