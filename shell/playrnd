@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# Search for music files from current directory and play in random
+# order using mplayer.
+
+LIST="m4a\|mp3\|wav\|ogg"
+
+mplayer -shuffle -playlist <(find "$(pwd)" -type f -regex ".*\.\($LIST\)") 2>&1 | grep --color=none ^Playing
