@@ -3,6 +3,10 @@
 # Search for music files from current directory and play in random
 # order using mplayer.
 
-LIST="m4a\|mp3\|wav\|ogg"
+LIST="m4a\|mp3\|mp4\|wav\|ogg\|wmv\|flv\|flac"
 
-mplayer -shuffle -playlist <(find "$(pwd)" -type f -regex ".*\.\($LIST\)") 2>&1 | grep --color=none ^Playing
+if [ "$1" = "-l" ]; then
+	find "$(pwd)" -type f -iregex ".*\.\($LIST\)" | sort -R
+else
+	mplayer $@ -shuffle -playlist <(find "$(pwd)" -type f -iregex ".*\.\($LIST\)") 2>&1 | grep --color=none ^Playing
+fi
