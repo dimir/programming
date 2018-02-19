@@ -8,5 +8,5 @@ LIST="m4a\|mp3\|mp4\|wav\|ogg\|wmv\|flv\|flac"
 if [ "$1" = "-l" ]; then
 	find "$(pwd)" -type f -iregex ".*\.\($LIST\)" | sort -R
 else
-	mplayer $@ -shuffle -playlist <(find "$(pwd)" -type f -iregex ".*\.\($LIST\)") 2>&1 | grep --color=none ^Playing
+	mplayer $@ -shuffle -playlist <(find "$(pwd)" -type f -iregex ".*\.\($LIST\)")
 fi
