@@ -1,9 +1,9 @@
-cl			- clear backup files (e. g. *~ #*) found from current directory
-fix-names.sh		- replace whitespaces with underscores in file names
+cl			- clear backup files (e. g. *~ #*) created by text editors (accepts '-r' option to do that recurcively)
+fix-names.sh <files>	- replace whitespaces with underscores in file names
 keep-wifi-ecolines.sh	- keep Wi-Fi connection open in Ecolines buses
 keep-wifi-luxexpress.sh	- keep Wi-Fi connection open in Eurolines buses
 keep-wifi-tos.sh	- keep Wi-Fi connection open in TOS (Traumatoloģijas un Ortopēdijas Slimnīcā) in Riga
-ping_host		- use multi-ping to decide if host is down
-playrnd			- randomly play media files found from current directory
+ping_host		- check if the host is alive (at least one ping succeeded)
+playrnd			- search for media files from current directory and play in random order using mplayer
 scr.sh <name>		- take a screenshot on Linux (saves as /tmp/<name>.png)
 upgrade-skype.sh	- upgrade skype on Debian based systems
