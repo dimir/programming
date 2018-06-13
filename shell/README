@@ -1,0 +1,9 @@
+cl			- clear backup files (e. g. *~ #*) found from current directory
+fix-names.sh		- replace whitespaces with underscores in file names
+keep-wifi-ecolines.sh	- keep Wi-Fi connection open in Ecolines buses
+keep-wifi-luxexpress.sh	- keep Wi-Fi connection open in Eurolines buses
+keep-wifi-tos.sh	- keep Wi-Fi connection open in TOS (Traumatoloģijas un Ortopēdijas Slimnīcā) in Riga
+ping_host		- use multi-ping to decide if host is down
+playrnd			- randomly play media files found from current directory
+scr.sh <name>		- take a screenshot on Linux (saves as /tmp/<name>.png)
+upgrade-skype.sh	- upgrade skype on Debian based systems
