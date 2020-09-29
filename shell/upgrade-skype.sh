@@ -19,5 +19,8 @@ echo -n "Upgrade? [Y/n] "
 read ans
 [ -z "$ans" ] && ans="y" || ans=$(echo $ans | tr '[A-Z]' '[a-z]')
 [ "$ans" = "y" ] || exit 1
+
+pkill skypeforlinux
 sudo dpkg -i $PKG_PATH || exit 1
 rm -f $PKG_PATH
+skypeforlinux &
