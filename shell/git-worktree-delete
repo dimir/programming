@@ -1,0 +1,98 @@
+#!/bin/bash
+
+path=
+trace=0
+force=0
+
+set -o nounset
+set -o pipefail
+set -o errexit
+
+usage()
+{
+	echo "usage: $0 [-f] [-x] <dir>"
+	exit 1
+}
+
+while [ -n "${1-}" ]; do
+	case $1 in
+		-f)
+			force=1
+			;;
+		-x)
+			trace=1
+			;;
+		-*)
+			echo "unknown option \"$1\""
+			usage
+			;;
+		*)
+			if [ -n "$path" ]; then
+				echo "$1: path already specified as \"$path\""
+				usage
+			fi
+
+			path="$1"
+	esac
+	shift
+done
+
+[ -z "$path" ] && usage
+
+path=$(readlink -f $path)
+
+[ -d "$path" ] || usage
+
+[ $trace -eq 1 ] && set -x
+
+# find out which part of the right side refers to a branch
+branch=
+found=
+
+IFS='/' read -ra DIRS <<< "$path"
+let i_max=${#DIRS[@]}-1
+
+get_branch_name()
+{
+	found=0
+
+	for ((i=$i_max; $i >= 0; i--)); do
+		dir="${DIRS[i]}"
+
+		[ -n "$branch" ] && dir="$dir/"
+		branch="$dir$branch"
+
+		if git rev-parse --verify "origin/$branch" > /dev/null 2>&1; then
+			found=1
+			break
+		fi
+
+		if [ $force -eq 1 ]; then
+			if git show-ref --verify --quiet refs/heads/$branch; then
+				found=1
+				break
+			fi
+		fi
+	done
+}
+
+get_branch_name
+
+if [ $found -eq 0 ]; then
+	if ! git fetch > /dev/null 2>&1; then
+		echo "can't even \"git fetch\", are you in the git repo?"
+		exit 1
+	fi
+	
+	get_branch_name
+fi
+
+if [ $found -eq 0 ]; then
+	echo "$path: could not find related branch, see available with \"git branch -a\""
+	exit 1
+fi
+
+git worktree remove -f "$path"
+git branch -D "$branch"
+rm -rf "$path"
+git push origin ":$branch"

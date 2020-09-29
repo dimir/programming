@@ -1,0 +1,101 @@
+#!/bin/bash
+
+usage()
+{
+	local msg=$1
+	shift
+
+	[ -n "$msg" ] && echo $msg
+
+	echo "usage: $0 [-t] [-x] <dir>"
+	exit 1
+}
+
+tag=0
+trace=0
+path=
+
+while [ -n "$1" ]; do
+	case $1 in
+		-t)
+			tag=1
+			;;
+		-x)
+			trace=1
+			;;
+		-h)
+			usage
+			;;
+		-*)
+			usage "$1: unknown option"
+			;;
+		*)
+			path="$1"
+			;;
+	esac
+	shift
+done
+
+[ -z "$path" ] && usage
+
+path=$(readlink -f $path)
+
+[ $trace -eq 1 ] && set -x
+
+origin_prefix=
+if [ $tag -eq 1 ]; then
+	origin_prefix=""
+else
+	origin_prefix="origin/"
+fi
+
+# find out which part of the right side refers to a branch
+branch=
+found=
+
+IFS='/' read -ra DIRS <<< "$path"
+let i_max=${#DIRS[@]}-1
+
+get_branch_name()
+{
+	found=0
+
+	for ((i=$i_max; $i >= 0; i--)); do
+		dir="${DIRS[i]}"
+
+		[ -n "$branch" ] && dir="$dir/"
+		branch="$dir$branch"
+
+		if git rev-parse --verify "$origin_prefix$branch" > /dev/null 2>&1; then
+			found=1
+			break
+		fi
+	done
+}
+
+get_branch_name
+
+if [ $found -eq 0 ]; then
+	if ! git fetch --tags > /dev/null 2>&1; then
+		echo "can't even \"git fetch\", are you in the git repo?"
+		exit 1
+	fi
+	
+	get_branch_name
+fi
+
+if [ $found -eq 0 ]; then
+	if [ $tag -eq 1 ]; then
+		echo "could not find tag \"$path\", see available with \"git tag -l\""
+	else
+		echo "$path: could not find related branch, see available with \"git branch -a\""
+	fi
+
+	exit 1
+fi
+
+echo "branch=[$branch] path=[$path]"
+
+git worktree add "$path" "$branch" || exit
+
+cd "$path"
