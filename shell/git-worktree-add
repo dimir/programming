@@ -7,8 +7,41 @@ usage()
 
 	[ -n "$msg" ] && echo $msg
 
-	echo "usage: $0 [-t] [-x] <dir>"
+	echo "usage: $0 [-t] [-x] [-h] <dir>"
+	echo "-t    working on a tag instead of branch"
+	echo "-x    enable bash trace"
+	echo "-h    show this help message"
 	exit 1
+}
+
+get_branch_name()
+{
+	found=0
+
+	origin_prefixes=()
+	if [ $tag -eq 1 ]; then
+		origin_prefixes+=("")
+	else
+		for i in $(git remote); do
+			origin_prefixes+=("$i/")
+		done
+	fi
+
+	for ((i=$i_max; $i >= 0; i--)); do
+		dir="${DIRS[i]}"
+
+		[ -n "$branch" ] && dir="$dir/"
+		branch="$dir$branch"
+
+		for o in "${origin_prefixes[@]}"; do
+			if git rev-parse --verify "$o$branch" > /dev/null 2>&1; then
+				found=1
+				break
+			fi
+		done
+
+		[ $found -eq 1 ] && break
+	done
 }
 
 tag=0
@@ -38,16 +71,13 @@ done
 
 [ -z "$path" ] && usage
 
+dname=$(dirname $path)
+
+[ -d $dname ] || usage "did you forget to create \"$dname\" directory?"
+
 path=$(readlink -f $path)
 
 [ $trace -eq 1 ] && set -x
-
-origin_prefix=
-if [ $tag -eq 1 ]; then
-	origin_prefix=""
-else
-	origin_prefix="origin/"
-fi
 
 # find out which part of the right side refers to a branch
 branch=
@@ -55,23 +85,6 @@ found=
 
 IFS='/' read -ra DIRS <<< "$path"
 let i_max=${#DIRS[@]}-1
-
-get_branch_name()
-{
-	found=0
-
-	for ((i=$i_max; $i >= 0; i--)); do
-		dir="${DIRS[i]}"
-
-		[ -n "$branch" ] && dir="$dir/"
-		branch="$dir$branch"
-
-		if git rev-parse --verify "$origin_prefix$branch" > /dev/null 2>&1; then
-			found=1
-			break
-		fi
-	done
-}
 
 get_branch_name
 
@@ -96,6 +109,6 @@ fi
 
 echo "branch=[$branch] path=[$path]"
 
-git worktree add "$path" "$branch" || exit
+git worktree add -f "$path" "$branch" || exit
 
 cd "$path"
