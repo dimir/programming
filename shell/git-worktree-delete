@@ -2,7 +2,7 @@
 
 path=
 force=0
-deleteremote=1
+deleteremote=0
 trace=0
 
 set -o nounset
@@ -11,9 +11,9 @@ set -o errexit
 
 usage()
 {
-	echo "usage: $0 [-f] [-n] [-x] [-h] <dir>"
+	echo "usage: $0 [-f] [-d] [-x] [-h] <dir>"
 	echo "-f    force"
-	echo "-n    do not delete remote branch"
+	echo "-d    in addition, delete remote branch"
 	echo "-x    enable bash trace"
 	echo "-h    show this help message"
 	exit 1
@@ -24,8 +24,8 @@ while [ -n "${1-}" ]; do
 		-f)
 			force=1
 			;;
-		-n)
-			deleteremote=0
+		-d)
+			deleteremote=1
 			;;
 		-x)
 			trace=1
