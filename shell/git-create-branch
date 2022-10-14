@@ -1,0 +1,78 @@
+#!/bin/bash
+
+usage()
+{
+	local msg=$1
+	shift
+
+	[ -n "$msg" ] && echo $msg
+
+	echo "usage: $0 -v <version> -t <ticket>"
+	echo "-v    Zabbix version (e. g. 6.0)"
+	echo "-t    name of the ticket (g. g. ZBX-123)"
+	echo "-x    enable bash trace"
+	echo "-h    show this help message"
+	exit 1
+}
+
+version=0
+ticket=
+trace=0
+
+while [ -n "$1" ]; do
+	case $1 in
+		-v)
+			shift
+			version="$1"
+			;;
+		-t)
+			shift
+			ticket="$1"
+			;;
+		-h)
+			usage
+			;;
+		-*)
+			usage "$1: unknown option"
+			;;
+		*)
+			usage "$1: unexpected parameter"
+			;;
+	esac
+	shift
+done
+
+[ -z "$version" ] && usage
+[ -z "$ticket" ] && usage
+
+[ $trace -eq 1 ] && set -x
+
+echo -n "will create branch \"feature/$ticket-$version\", continue [Y/n]? "
+read ans
+ans=$(echo $ans | tr [A-Z] [a-z])
+
+if [[ -n "$ans" && $ans != y && $ans != yes ]]; then
+	echo "Exiting"
+	exit
+fi
+
+#git push origin origin/release/$version:refs/heads/feature/$ticket-$version
+
+worktree=
+if [ -d ../../feature ]; then
+	worktree="../../feature/$ticket-$version"
+elif [ -d ../feature ]; then
+	worktree="../feature/$ticket-$version"
+else
+	exit
+fi
+
+echo -n "should I create a worktree $worktree for it [Y/n]? "
+read ans
+ans=$(echo $ans | tr [A-Z] [a-z])
+
+if [[ -n "$ans" && $ans != y && $ans != yes ]]; then
+	exit
+fi
+
+git-worktree-add $worktree
