@@ -11,9 +11,9 @@ set -o errexit
 
 usage()
 {
-	echo "usage: $0 [-f] [-d] [-x] [-h] <dir>"
+	echo "usage: $0 [-f] [-r] [-x] [-h] <dir>"
 	echo "-f    force"
-	echo "-d    in addition, delete remote branch"
+	echo "-r    in addition, delete remote branch"
 	echo "-x    enable bash trace"
 	echo "-h    show this help message"
 	exit 1
@@ -24,7 +24,7 @@ while [ -n "${1-}" ]; do
 		-f)
 			force=1
 			;;
-		-d)
+		-r)
 			deleteremote=1
 			;;
 		-x)

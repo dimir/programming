@@ -101,7 +101,7 @@ if [ $found -eq 0 ]; then
 	if [ $tag -eq 1 ]; then
 		echo "could not find tag \"$path\", see available with \"git tag -l\""
 	else
-		echo "$path: could not find related branch, see available with \"git branch -a\""
+		echo "$path: could not find related branch, see available with \"git branch -a\" or did you miss -t (for tag)?"
 	fi
 
 	exit 1
