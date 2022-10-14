@@ -56,7 +56,11 @@ if [[ -n "$ans" && $ans != y && $ans != yes ]]; then
 	exit
 fi
 
-#git push origin origin/release/$version:refs/heads/feature/$ticket-$version
+git push origin origin/release/$version:refs/heads/feature/$ticket-$version
+
+if ! which git-worktree-add > /dev/null; then
+	exit
+fi
 
 worktree=
 if [ -d ../../feature ]; then
