@@ -7,9 +7,9 @@ usage()
 
 	[ -n "$msg" ] && echo $msg
 
-	echo "usage: $0 -v <version> -t <ticket>"
+	echo "usage: $0 -v <version> -i <issue> [-x] [-h]"
 	echo "-v    Zabbix version (e. g. 6.0)"
-	echo "-t    name of the ticket (g. g. ZBX-123)"
+	echo "-i    name of the issue ticket (e. g. ZBX-123)"
 	echo "-x    enable bash trace"
 	echo "-h    show this help message"
 	exit 1
@@ -25,7 +25,7 @@ while [ -n "$1" ]; do
 			shift
 			version="$1"
 			;;
-		-t)
+		-i)
 			shift
 			ticket="$1"
 			;;
