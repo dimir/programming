@@ -5,4 +5,4 @@ if [ "-r" != "$1" ]; then
     OPTS="-maxdepth 1"
 fi
 
-find . $OPTS \( -name '*~' -o -name '#*#' -o -name '*.rej' -o -name '*.orig' \) -exec rm -vf '{}' \;
+find . $OPTS \( -name '.#*' -o -name '*~' -o -name '#*#' -o -name '*.rej' -o -name '*.orig' \) -exec rm -vf '{}' \;
