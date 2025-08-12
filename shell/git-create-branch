@@ -47,7 +47,16 @@ done
 
 [ $trace -eq 1 ] && set -x
 
-echo -n "will create branch \"feature/$ticket-$version\", continue [Y/n]? "
+# find out the source branch
+src_branch=
+minor=${version##*.}
+if (($minor % 2)); then
+	src_branch="master"
+else
+	src_branch="release/$version"
+fi
+
+echo -n "will create branch \"feature/$ticket-$version\" from \"$src_branch\", continue [Y/n]? "
 read ans
 ans=$(echo $ans | tr [A-Z] [a-z])
 
@@ -56,7 +65,7 @@ if [[ -n "$ans" && $ans != y && $ans != yes ]]; then
 	exit
 fi
 
-git push origin origin/release/$version:refs/heads/feature/$ticket-$version
+git push origin origin/$src_branch:refs/heads/feature/$ticket-$version
 
 if ! which git-worktree-add > /dev/null; then
 	exit
