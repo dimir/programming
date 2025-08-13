@@ -1,0 +1,3 @@
+#!/bin/bash
+
+dwdiff --color=bred,bgreen -d ',;&*()[]{}=".' --diff-input $@
