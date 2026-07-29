@@ -73,7 +73,7 @@ done
 
 dname=$(dirname $path)
 
-[ -d $dname ] || usage "did you forget to create \"$dname\" directory?"
+[ -d $dname ] || mkdir -p $dname
 
 path=$(readlink -f $path)
 
